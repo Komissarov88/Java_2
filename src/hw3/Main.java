@@ -12,9 +12,7 @@ public class Main {
                 "Найти", "Создать", "Создать", "сколько", "раз", "Создать", "каждое", "Создать"};
         Map<String, Integer> uniqueWords = getWordsWithFrequencyFromArray(words);
         for (Map.Entry<String, Integer> entry: uniqueWords.entrySet()) {
-            if (entry.getValue() < 2) {
-                System.out.println(entry.getKey());
-            }
+            System.out.println(entry.getKey() + " : " + entry.getValue());
         }
 
         PhoneBook book = new PhoneBook();
