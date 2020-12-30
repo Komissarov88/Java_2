@@ -1,14 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<VBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1"
+<?import javafx.geometry.Insets?>
+<VBox prefHeight="720.0" prefWidth="500.0"
+      xmlns="http://javafx.com/javafx/15.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="hw4.Controller">
-    <TextArea prefHeight="200.0" prefWidth="200.0"/>
-    <HBox prefHeight="100.0" prefWidth="200.0">
-        <TextField/>
-        <Button mnemonicParsing="false" text="Button"/>
+
+    <stylesheets>
+        <URL value="@/hw4/style.css" />
+    </stylesheets>
+
+    <padding>
+        <Insets top="10" bottom="10" left="10" right="10"/>
+    </padding>
+
+    <TextArea fx:id="chat" VBox.vgrow="ALWAYS" editable="false"/>
+
+    <HBox spacing="10">
+        <padding>
+            <Insets top="10"/>
+        </padding>
+
+        <TextField fx:id="messageField" HBox.hgrow="ALWAYS" focusTraversable="false" onKeyPressed="#onKeyPressed"/>
+        <Button mnemonicParsing="false" onAction="#sendMessage" text="Send" />
     </HBox>
 </VBox>
