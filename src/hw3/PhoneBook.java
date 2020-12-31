@@ -20,7 +20,6 @@ public class PhoneBook {
 
     public Long[] getPhonesFor(String name) {
         if (!book.containsKey(name)) {
-            System.out.println("No phones for that person");
             return new Long[0];
         }
         return book.get(name).toArray(new Long[0]);
