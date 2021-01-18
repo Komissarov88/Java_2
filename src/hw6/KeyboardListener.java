@@ -20,6 +20,7 @@ public class KeyboardListener implements Runnable {
             try {
                 String msg = scanner.nextLine();
                 kbdMessages.add(msg);
+                Speaker.resume();
             } catch (IllegalStateException e) {
                 break;
             }

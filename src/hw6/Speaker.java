@@ -8,6 +8,8 @@ import java.net.Socket;
 
 public class Speaker {
 
+    private static final Object monitor = new Object();
+
     private static final String IP_ADDRESS = "localhost";
     private static final int PORT = 9292;
     private ServerSocket host;
@@ -70,35 +72,51 @@ public class Speaker {
             DataInputStreamListener otherListener = new DataInputStreamListener(in);
             new Thread(otherListener).start();
 
-            while(true) {
-                try {
-                    String msg = otherListener.getMsg();
+            try {
+                mainLoop:
+                while(true) {
+                    String msg;
 
-                    if (msg != null) {
+                    while ((msg = otherListener.getMsg()) != null) {
                         if (msg.equals("/end")) {
                             System.out.println("Disconnected");
-                            break;
+                            break mainLoop;
                         }
                         System.out.println("Other: " + msg);
                     }
 
-                    msg = keyboardListener.getMsg();
-                    if (msg != null) {
+                    while ((msg = keyboardListener.getMsg()) != null) {
                         if (msg.equals("/end")) {
                             System.out.println("You quited chat");
                             out.writeUTF("/end");
-                            break;
+                            break mainLoop;
                         }
                         out.writeUTF(msg);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    break;
+                    pause();
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void pause() {
+        synchronized (monitor) {
+            try {
+                monitor.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void resume() {
+        synchronized (monitor) {
+            monitor.notify();
         }
     }
 }

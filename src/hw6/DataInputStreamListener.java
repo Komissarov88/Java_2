@@ -25,6 +25,7 @@ public class DataInputStreamListener implements Runnable {
                 break;
             }
             messages.add(msg);
+            Speaker.resume();
         }
     }
 
