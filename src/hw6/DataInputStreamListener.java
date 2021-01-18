@@ -9,10 +9,12 @@ public class DataInputStreamListener implements Runnable {
 
     private final BlockingDeque<String> messages;
     private final DataInputStream in;
+    private final Speaker owner;
 
-    public DataInputStreamListener(DataInputStream in) {
+    public DataInputStreamListener(DataInputStream in, Speaker owner) {
         this.in = in;
         messages = new LinkedBlockingDeque<>();
+        this.owner = owner;
     }
 
     @Override
@@ -25,7 +27,7 @@ public class DataInputStreamListener implements Runnable {
                 break;
             }
             messages.add(msg);
-            Speaker.resume();
+            owner.resume();
         }
     }
 

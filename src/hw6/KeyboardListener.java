@@ -8,10 +8,12 @@ public class KeyboardListener implements Runnable {
 
     private final BlockingQueue<String> kbdMessages;
     private final Scanner scanner;
+    private final Speaker owner;
 
-    public KeyboardListener() {
+    public KeyboardListener(Speaker owner) {
         scanner = new Scanner(System.in);
         kbdMessages = new LinkedBlockingQueue<>();
+        this.owner = owner;
     }
 
     @Override
@@ -20,7 +22,7 @@ public class KeyboardListener implements Runnable {
             try {
                 String msg = scanner.nextLine();
                 kbdMessages.add(msg);
-                Speaker.resume();
+                owner.resume();
             } catch (IllegalStateException e) {
                 break;
             }

@@ -8,7 +8,7 @@ import java.net.Socket;
 
 public class Speaker {
 
-    private static final Object monitor = new Object();
+    private final Object monitor = new Object();
 
     private static final String IP_ADDRESS = "localhost";
     private static final int PORT = 9292;
@@ -64,12 +64,12 @@ public class Speaker {
 
             System.out.println("Connected");
 
-            KeyboardListener keyboardListener = new KeyboardListener();
+            KeyboardListener keyboardListener = new KeyboardListener(this);
             Thread t = new Thread(keyboardListener);
             t.setDaemon(true);
             t.start();
 
-            DataInputStreamListener otherListener = new DataInputStreamListener(in);
+            DataInputStreamListener otherListener = new DataInputStreamListener(in, this);
             new Thread(otherListener).start();
 
             try {
@@ -104,7 +104,7 @@ public class Speaker {
         }
     }
 
-    public static void pause() {
+    private void pause() {
         synchronized (monitor) {
             try {
                 monitor.wait();
@@ -114,7 +114,7 @@ public class Speaker {
         }
     }
 
-    public static void resume() {
+    public void resume() {
         synchronized (monitor) {
             monitor.notify();
         }
