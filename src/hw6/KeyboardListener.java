@@ -7,10 +7,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class KeyboardListener implements Runnable {
 
     private final BlockingQueue<String> kbdMessages;
-    Scanner kbd;
+    private final Scanner scanner;
 
-    public KeyboardListener(Scanner scanner) {
-        kbd = scanner;
+    public KeyboardListener() {
+        scanner = new Scanner(System.in);
         kbdMessages = new LinkedBlockingQueue<>();
     }
 
@@ -18,7 +18,7 @@ public class KeyboardListener implements Runnable {
     public void run() {
         while(true) {
             try {
-                String msg = kbd.nextLine();
+                String msg = scanner.nextLine();
                 kbdMessages.add(msg);
             } catch (IllegalStateException e) {
                 break;

@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Speaker {
 
@@ -14,7 +13,11 @@ public class Speaker {
     private ServerSocket host;
     private Socket other;
 
-    public void connect() {
+    public Speaker() {
+        connect();
+    }
+
+    private void connect() {
         try {
             other = new Socket(IP_ADDRESS, PORT);
         } catch (IOException e) {
@@ -55,13 +58,14 @@ public class Speaker {
 
     private void loop() {
         try(DataInputStream in = new DataInputStream(other.getInputStream());
-            DataOutputStream out = new DataOutputStream(other.getOutputStream());
-            Scanner self = new Scanner(System.in)) {
+            DataOutputStream out = new DataOutputStream(other.getOutputStream())) {
 
             System.out.println("Connected");
 
-            KeyboardListener keyboardListener = new KeyboardListener(self);
-            new Thread(keyboardListener).start();
+            KeyboardListener keyboardListener = new KeyboardListener();
+            Thread t = new Thread(keyboardListener);
+            t.setDaemon(true);
+            t.start();
 
             DataInputStreamListener otherListener = new DataInputStreamListener(in);
             new Thread(otherListener).start();
@@ -73,7 +77,7 @@ public class Speaker {
                     if (msg != null) {
                         if (msg.equals("/end")) {
                             System.out.println("Disconnected");
-                            return;
+                            break;
                         }
                         System.out.println("Other: " + msg);
                     }
@@ -83,13 +87,13 @@ public class Speaker {
                         if (msg.equals("/end")) {
                             System.out.println("You quited chat");
                             out.writeUTF("/end");
-                            return;
+                            break;
                         }
                         out.writeUTF(msg);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                    return;
+                    break;
                 }
             }
 
