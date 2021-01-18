@@ -14,37 +14,39 @@ public class Speaker {
     private static final int PORT = 9292;
     private ServerSocket host;
     private Socket other;
+    private String otherName;
 
-    public Speaker() {
-        connect();
-    }
-
-    private void connect() {
+    public Speaker(boolean isServer) {
         try {
-            other = new Socket(IP_ADDRESS, PORT);
+            if (isServer) {
+                startServer();
+                waitClient();
+            } else {
+                connect();
+            }
         } catch (IOException e) {
-            startServer();
-            waitClient();
+            e.printStackTrace();
+            return;
         }
         loop();
         close();
     }
 
-    private void startServer() {
-        try {
-            host = new ServerSocket(PORT);
-            System.out.println("Server started");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void connect() throws IOException {
+        other = new Socket(IP_ADDRESS, PORT);
+        otherName = "Server";
+        System.out.println("Connected to server");
     }
 
-    private void waitClient() {
-        try {
-            other = host.accept();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void startServer() throws IOException {
+        host = new ServerSocket(PORT);
+        System.out.println("Server started");
+    }
+
+    private void waitClient() throws IOException {
+        other = host.accept();
+        otherName = "Client";
+        System.out.println("Client connected");
     }
 
     private void close() {
@@ -62,8 +64,6 @@ public class Speaker {
         try(DataInputStream in = new DataInputStream(other.getInputStream());
             DataOutputStream out = new DataOutputStream(other.getOutputStream())) {
 
-            System.out.println("Connected");
-
             KeyboardListener keyboardListener = new KeyboardListener(this);
             Thread t = new Thread(keyboardListener);
             t.setDaemon(true);
@@ -79,10 +79,10 @@ public class Speaker {
 
                     while ((msg = otherListener.getMsg()) != null) {
                         if (msg.equals("/end")) {
-                            System.out.println("Disconnected");
+                            System.out.println(otherName + " disconnected");
                             break mainLoop;
                         }
-                        System.out.println("Other: " + msg);
+                        System.out.println(otherName + ": " + msg);
                     }
 
                     while ((msg = keyboardListener.getMsg()) != null) {
