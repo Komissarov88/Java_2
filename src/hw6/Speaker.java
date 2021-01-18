@@ -72,31 +72,27 @@ public class Speaker {
             DataInputStreamListener otherListener = new DataInputStreamListener(in, this);
             new Thread(otherListener).start();
 
-            try {
-                mainLoop:
-                while(true) {
-                    String msg;
+            mainLoop:
+            while(true) {
+                String msg;
 
-                    while ((msg = otherListener.getMsg()) != null) {
-                        if (msg.equals("/end")) {
-                            System.out.println(otherName + " disconnected");
-                            break mainLoop;
-                        }
-                        System.out.println(otherName + ": " + msg);
+                while ((msg = otherListener.getMsg()) != null) {
+                    if (msg.equals("/end")) {
+                        System.out.println(otherName + " disconnected");
+                        break mainLoop;
                     }
-
-                    while ((msg = keyboardListener.getMsg()) != null) {
-                        if (msg.equals("/end")) {
-                            System.out.println("You quited chat");
-                            out.writeUTF("/end");
-                            break mainLoop;
-                        }
-                        out.writeUTF(msg);
-                    }
-                    pause();
+                    System.out.println(otherName + ": " + msg);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+
+                while ((msg = keyboardListener.getMsg()) != null) {
+                    if (msg.equals("/end")) {
+                        System.out.println("You quited chat");
+                        out.writeUTF("/end");
+                        break mainLoop;
+                    }
+                    out.writeUTF(msg);
+                }
+                pause();
             }
 
         } catch (IOException e) {
