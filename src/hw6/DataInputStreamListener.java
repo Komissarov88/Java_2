@@ -2,17 +2,19 @@ package hw6;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class DataInputStreamListener implements Runnable {
 
-    private final BlockingQueue<String> messages;
+    private final BlockingDeque<String> messages;
     private final DataInputStream in;
 
     public DataInputStreamListener(DataInputStream in) {
         this.in = in;
-        messages = new LinkedBlockingQueue<>();
+        messages = new LinkedBlockingDeque<>();
     }
 
     @Override
